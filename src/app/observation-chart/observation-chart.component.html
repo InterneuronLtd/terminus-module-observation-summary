@@ -1,0 +1,1356 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2025  Interneuron Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<!-- Interneuron Observation App
+Copyright(C) 2023  Interneuron Holdings Ltd
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the
+GNU General Public License for more details.
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>.  -->
+
+<div id="moduleWrapper" class="p-1" #dischargeSummaryElement>
+    <div #header class="ml-1" *ngIf="loadcomplete" [ngStyle]="{ 'width': headerwidth }">
+    
+        
+        <!-- <div class="row">
+            <div class="col-md-12 mt-2 ml-1">
+                <span class="h3">Physical Health Observation Report</span>
+                <span class="float-right">
+                    <b>Report Last Updated: {{currentDate}}</b>
+                </span>
+            </div>
+        </div>
+        <div class="row ml-1 mt-1" >
+            <div class="col bg-dark border rounded font-weight-bold">
+                <span class="text-warning ">Name</span><br>
+                {{appService.encounter.lastname }},
+                {{appService.encounter.firstname }}
+            </div>
+            <div class="col bg-dark border rounded font-weight-bold">
+                <span class="text-warning">Trust ID</span><br>
+                {{appService.encounter.hospitalnumber }}
+            </div>
+            <div class="col bg-dark border rounded font-weight-bold">
+                <span class="text-warning">DOB</span><br>
+                {{appService.encounter.dateofbirth | date:'d/MM/yyyy'}}
+            </div>
+            <div class="col bg-dark border rounded font-weight-bold">
+                <span class="text-warning">Gender</span><br>
+                {{appService.encounter.gender }}
+            </div>
+
+            <div class="col-md-2 bg-dark border rounded font-weight-bold">
+                <span class="text-warning">NHS No.</span><br>
+                {{appService.encounter.nhsnumber }}
+            </div>
+        </div> -->
+        <!-- <div class="bg-light ml-3" >
+            <div class="row ml-1 mt-2" >
+                <div class="font-weight-bold">Current Location</div>
+                <div class="col"> {{appService.encounter.currentlocation}}</div>
+                <div class="font-weight-bold">Admission Date</div>
+                <div class="col"> {{appService.encounter.admitdatetime | date:'d/MM/yyyy H:mm'}}</div>
+                <div class="font-weight-bold">Length Of Stay</div>
+                <div class="col"> {{appService.lenghOfStay}}</div>
+               
+            </div>
+
+        </div> -->
+    </div>
+    <div #observationChartWrapper id="observationChartWrapper" [ngStyle]="{ 'width': headerwidth }">
+        <div #xAxisHeader id="xAxisHeader" class="xAxisHeader"></div>
+        <div #chartHolder id="chartHolder" class="chartHolder"></div>
+    </div>
+    <div>
+        
+        <div *ngIf="news2historydata?.length > 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>NEWS2 Frequency</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>{{ScaleType}} Frequency</h5></td>
+                </tr>
+            </table>
+            <!-- <div class="row">  
+                <div class="col-6">
+                    <div class="font-weight-bold">NEWS Frequency :</div>
+                    <div *ngIf="!appService.isNEWS2MonitoringStopped"> {{appService.NEWS2MonitoringFrequency}}</div>
+                </div> 
+                
+                
+                <div class="col-6">
+                    <div class="font-weight-bold">Time to next NEWS2 Obs : </div> 
+                    <div *ngIf="!appService.isNEWS2MonitoringStopped">
+                        <div *ngIf="isDue()" class="text-danger font-weight-bold">
+                            Overdue by 
+                            {{appService.timetonextNEWS2}}
+                        </div>
+                        <div *ngIf="!isDue() &&  appService.nextObsDueTime " class="text-info font-weight-bold">
+                            Due in 
+                            {{appService.timetonextNEWS2}}
+                        </div>
+                    </div>
+                    <div *ngIf="(appService.isNEWS2MonitoringStopped)">
+                        <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                    </div>
+                    
+                    
+                </div>
+            </div> -->
+            <table style="width:100%">
+                <tr>
+                    <td style="width:33%">
+                        <div class="font-weight-bold">{{ScaleType}} Frequency :</div> 
+                        <div *ngIf="!appService.isNEWS2MonitoringStopped"> {{appService.NEWS2MonitoringFrequency}}</div>
+                    </td>
+                    <td style="width:33%; padding-left: 75px">
+                        <div class="font-weight-bold">Time to next {{ScaleType}} Obs : </div> 
+                        <div *ngIf="!appService.isNEWS2MonitoringStopped">
+                            <div *ngIf="isDue()" class="text-danger font-weight-bold">
+                                Overdue by 
+                                {{appService.timetonextNEWS2}}
+                            </div>
+                            <div *ngIf="!isDue() &&  appService.nextObsDueTime " class="text-info font-weight-bold">
+                                Due in 
+                                {{appService.timetonextNEWS2}}
+                            </div>
+                        </div>
+                        <div *ngIf="(appService.isNEWS2MonitoringStopped)">
+                            <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                        </div>
+                    </td>
+                    <td style="width:33%">
+                        <div style="margin-top:20px !important; margin-bottom: -35px; font-weight: bold; text-align: right">Showing {{news2historydata?.length > 18 ? 18 : news2historydata?.length}} of {{news2historydata?.length}} records</div>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th style="width: 15%;">Observation Time</th>
+                    <th>Monitoring Frequency</th>
+                    <th>Reason</th>
+                    <th style="width: 12%;">Recorded By</th>
+                </tr>
+        
+                <tr *ngFor="let history of news2historydata | slice:0:18">
+                    <td style="text-align: left;">
+                        <span> {{history['datestarted'] | date : 'dd-MM-YYYY HH:mm'}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['monitoringfrequency']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['frequencyreason']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['lastmodifiedby']}}</span>
+                    </td>
+                    
+                </tr>   
+            </table>
+        </div>
+    
+        <div *ngIf="news2historydata?.length == 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>NEWS2 Frequency</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>{{ScaleType}} Frequency</h5></td>
+                </tr>
+            </table>
+            <!-- <div class="row">  
+                <div class="col-6">
+                    <div class="font-weight-bold">NEWS Frequency :</div>
+                    <div *ngIf="!appService.isNEWS2MonitoringStopped"> {{appService.NEWS2MonitoringFrequency}}</div>
+                </div> 
+                
+                
+                <div class="col-6">
+                    <div class="font-weight-bold">Time to next NEWS2 Obs : </div> 
+                    <div *ngIf="!appService.isNEWS2MonitoringStopped">
+                        <div *ngIf="isDue()" class="text-danger font-weight-bold">
+                            Overdue by 
+                            {{appService.timetonextNEWS2}}
+                        </div>
+                        <div *ngIf="!isDue() &&  appService.nextObsDueTime " class="text-info font-weight-bold">
+                            Due in 
+                            {{appService.timetonextNEWS2}}
+                        </div>
+                    </div>
+                    <div *ngIf="(appService.isNEWS2MonitoringStopped)">
+                        <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                    </div>
+                    
+                    
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td style="width: 70%;">
+                        <div class="font-weight-bold">{{ScaleType}} Frequency :</div>
+                        <div *ngIf="!appService.isNEWS2MonitoringStopped"> {{appService.NEWS2MonitoringFrequency}}</div>
+                    </td>
+                    <td>
+                        <div class="font-weight-bold">Time to next {{ScaleType}} Obs : </div> 
+                        <div *ngIf="!appService.isNEWS2MonitoringStopped">
+                            <div *ngIf="isDue()" class="text-danger font-weight-bold">
+                                Overdue by 
+                                {{appService.timetonextNEWS2}}
+                            </div>
+                            <div *ngIf="!isDue() &&  appService.nextObsDueTime " class="text-info font-weight-bold">
+                                Due in 
+                                {{appService.timetonextNEWS2}}
+                            </div>
+                        </div>
+                        <div *ngIf="(appService.isNEWS2MonitoringStopped)">
+                            <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Monitoring Frequency</th>
+                    <th>Reason</th>
+                    <th>Recorded By</th>
+                </tr>
+        
+                <tr>
+                    <td style="text-align: left;">
+                        <span> <b>No data.</b></span>
+                    </td>
+                </tr>   
+            </table>
+        </div>
+    
+        <div *ngIf="heightWeightData?.length > 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Weight & Height</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table style="width:100%">
+              <tr>
+                  <td style="width: 33%;">
+                      <div class="font-weight-bold">Weight & Height</div> 
+                      <div *ngIf="!appService.isMeasurementsMonitoringStopped"> {{appService.MeasurementsMonitoringFrequency}}</div>
+                  </td>
+                  <td style="width: 33%; padding-left: 75px">
+                      <div class="font-weight-bold">Time to next Measurement Obs : </div> 
+                      <div *ngIf="!appService.isMeasurementsMonitoringStopped">
+                          <div *ngIf="isDue()" class="text-danger font-weight-bold">
+                              Overdue by 
+                              {{appService.timetonextMeasurements}}
+                          </div>
+                          <div *ngIf="!isDue() &&  appService.nextObsDueTime " class="text-info font-weight-bold">
+                              Due in 
+                              {{appService.timetonextMeasurements}}
+                          </div>
+                      </div>
+                      <div *ngIf="(appService.isMeasurementsMonitoringStopped)">
+                          <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                      </div>
+                  </td>
+                  <td style="width: 33%;">
+                      <div style="margin-top:20px !important; margin-bottom: -35px; font-weight: bold; text-align: right">Showing {{heightWeightData?.length > 10 ? 10 : heightWeightData?.length}} of {{heightWeightData?.length}} records</div>
+                  </td>
+              </tr>
+              <tr>
+                  
+              </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Monitoring Frequency</th>
+                    <th>Patient Refused</th>
+                    <th>Weight</th>
+                    <th>Height</th>
+                    <th>Waist Circumference</th>
+                    <th>BMI</th>
+                    <th>Waist to height ratio</th>
+                    <th>Reason for refusal</th>
+                </tr>
+        
+                <tr *ngFor="let history of heightWeightData | slice:0:10">
+                    <td style="text-align: left;">
+                        <span> {{history.observationtime | date : 'dd-MM-YYYY HH:mm'}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                      <span>{{history['frequency']}} {{history['frequencyunit']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span> {{history.patientrefused? 'Patient Refused':''}}</span>
+                    </td>
+                    <td style="text-align: left;" [ngClass]="{'previousvalue': history._weightadded}">
+                        <span *ngIf="history.weight">{{history.weight}} kg</span>
+                    </td>
+                    <td style="text-align: left;" [ngClass]="{'previousvalue': history._heightadded}">
+                        <span *ngIf="history.height">{{history.height}} cm</span>
+                    </td>
+                    <td style="text-align: left;" [ngClass]="{'previousvalue': history._waistadded}">
+                        <span *ngIf="history.waistcircumferance">{{history.waistcircumferance}} cm</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span *ngIf="history.bmi">{{history.bmi}} (kg/m2)</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history.waisttoheight}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history.reasonforpatientrefused}}</span>
+                    </td>
+                </tr>   
+            </table>
+        </div>
+    
+        <div *ngIf="heightWeightData?.length == 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Weight & Height</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>Weight & Height</h5></td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Monitoring Frequency</th>
+                    <th>Patient Refused</th>
+                    <th>Weight</th>
+                    <th>Height</th>
+                    <th>Waist Circumference</th>
+                    <th>BMI</th>
+                    <th>Waist to height ratio</th>
+                    <th>Reason for refusal</th>
+                </tr>
+        
+                <tr>
+                    <td style="text-align: left;">
+                        <span> <b>No data.</b></span>
+                    </td>
+                </tr>   
+            </table>
+        </div>
+
+        <div *ngIf="bloodglucosehistorydata?.length > 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+                  
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Blood Glucose</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>Blood Glucose</h5></td>
+                </tr>
+            </table>
+            <!-- <div class="row">   
+                <div class="col-6">
+                    <div class="font-weight-bold">Blood glucose frequency :</div>
+                    <div *ngIf="!appService.isBGMonitoringStopped"> {{appService.BGMonitoringFrequency}}</div>
+                </div>
+                
+                <div class="col-6">
+                    <div class="font-weight-bold">Time to next Blood Glucose : </div> 
+                    <div *ngIf="!appService.isBGMonitoringStopped">
+                        <div *ngIf="isBGDue()" class="text-danger font-weight-bold">
+                            Overdue by 
+                            {{appService.timetonextBG}}
+                        </div>
+                        <div *ngIf="!isBGDue() &&  appService.nextBGObsDueTime " class="text-info font-weight-bold">
+                            Due in 
+                            {{appService.timetonextBG}}
+                        </div>
+                    </div>
+                    <div *ngIf="(appService.isBGMonitoringStopped)">
+                        <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                    </div>
+                    
+                    
+                </div>
+            </div> -->
+            <table style="width:100%">
+                <tr>
+                    <td style="width: 33%;">
+                        <div class="font-weight-bold">Blood glucose frequency :</div>
+                        <div *ngIf="!appService.isBGMonitoringStopped"> {{appService.BGMonitoringFrequency}}</div>
+                    </td>
+                    <td style="width: 33%; padding-left: 75px">
+                        <div class="font-weight-bold">Time to next Blood Glucose : </div> 
+                        <div *ngIf="!appService.isBGMonitoringStopped">
+                            <div *ngIf="isBGDue()" class="text-danger font-weight-bold">
+                                Overdue by 
+                                {{appService.timetonextBG}}
+                            </div>
+                            <div *ngIf="!isBGDue() &&  appService.nextBGObsDueTime " class="text-info font-weight-bold">
+                                Due in 
+                                {{appService.timetonextBG}}
+                            </div>
+                        </div>
+                        <div *ngIf="(appService.isBGMonitoringStopped)">
+                            <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                        </div>
+                    </td>
+                    <td style="width: 33%;">
+                        <div style="margin-top:20px !important; margin-bottom: -35px; font-weight: bold; text-align: right">Showing {{bloodglucosehistorydata?.length > 10 ? 10 : bloodglucosehistorydata?.length}} of {{bloodglucosehistorydata?.length}} records</div>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>mmol/L</th>
+                    <th>Recorded</th>
+                    <th>Monitoring frequency</th>
+                    <th>Reason</th>
+                    <th>Recorded Date/Time</th>
+                    <th>Recorded By</th>
+                </tr>
+        
+                <tr *ngFor="let history of bloodglucosehistorydata | slice:0:10">
+                    <td style="text-align: left;">
+                        <span> {{history['datestarted'] | date : 'dd-MM-YYYY HH:mm'}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{ history['foodtaken']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['lastmodifiedon']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['monitoringfrequency']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['frequencyreason']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['passedurine'] | date : 'dd-MM-YYYY HH:mm'}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['lastmodifiedby']}}</span>
+                    </td>
+                    
+                </tr>   
+            </table>
+        </div>
+    
+        <div *ngIf="bloodglucosehistorydata?.length == 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Blood Glucose</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>Blood Glucose</h5></td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>mmol/L</th>
+                    <th>Recorded</th>
+                    <th>Monitoring frequency</th>
+                    <th>Reason</th>
+                    <th>Recorded Date/Time</th>
+                    <th>Recorded By</th>
+                </tr>
+        
+                <tr>
+                    <td style="text-align: left;">
+                        <span> <b>No data.</b></span>
+                    </td>
+                </tr>   
+            </table>
+        </div>
+    
+        <div *ngIf="bristolstoolhistorydata?.length > 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Bowel Monitoring using the Bristol Stool Chart</h5>
+                </div>
+                <div class="col-6">
+    
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>Bowel Monitoring using the Bristol Stool Chart</h5></td>
+                </tr>
+            </table>
+            <!-- <div class="row">   
+                <div class="col-6">
+                    <div class="font-weight-bold">Bowel monitoring frequency :</div>
+                    <div *ngIf="!appService.isBSCMonitoringStopped"> {{appService.BSCMonitoringFrequency}}</div>
+                </div>
+                
+                <div class="col-6">
+                    <div class="font-weight-bold">Time to next Bowel Monitoring : </div> 
+                    <div *ngIf="!appService.isBSCMonitoringStopped">
+                        <div *ngIf="isBSCDue()" class="text-danger font-weight-bold">
+                            Overdue by 
+                            {{appService.timetonextBSC}}
+                        </div>
+                        <div *ngIf="!isBSCDue() &&  appService.nextBSCObsDueTime " class="text-info font-weight-bold">
+                            Due in 
+                            {{appService.timetonextBSC}}
+                        </div>
+                    </div>
+                    <div *ngIf="(appService.isBSCMonitoringStopped)">
+                        <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                    </div>
+                    
+                    
+                </div>
+            </div> -->
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 33%;">
+                        <div class="font-weight-bold">Bowel monitoring frequency :</div>
+                        <div *ngIf="!appService.isBSCMonitoringStopped"> {{appService.BSCMonitoringFrequency}}</div>
+                    </td>
+                    <td style="width: 33%; padding-left: 75px">
+                        <div class="font-weight-bold">Time to next Bowel Monitoring : </div> 
+                        <div *ngIf="!appService.isBSCMonitoringStopped">
+                            <div *ngIf="isBSCDue()" class="text-danger font-weight-bold">
+                                Overdue by 
+                                {{appService.timetonextBSC}}
+                            </div>
+                            <div *ngIf="!isBSCDue() &&  appService.nextBSCObsDueTime " class="text-info font-weight-bold">
+                                Due in 
+                                {{appService.timetonextBSC}}
+                            </div>
+                        </div>
+                        <div *ngIf="(appService.isBSCMonitoringStopped)">
+                            <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                        </div>
+                    </td>
+                    <td style="width: 33%;">
+                        <div style="margin-top:15px !important; margin-bottom: -35px; font-weight: bold; text-align: right;">Showing {{bristolstoolhistorydata?.length > 10 ? 10 : bristolstoolhistorydata?.length}} of {{bristolstoolhistorydata?.length}} records</div>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Type</th>
+                    <th>Monitoring Frequency</th>
+                    <th>Reason</th>
+                    <th>Recorded By</th>
+                    <th>Recorded Date/Time</th>
+                    <th>Reason for refusal</th>
+                </tr>
+        
+                <tr *ngFor="let history of bristolstoolhistorydata | slice:0:10">
+                    <td style="text-align: left;">
+                        <span> {{history['datestarted'] | date : 'dd-MM-YYYY HH:mm'}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{ history['foodtaken']}}</span>
+                    </td>            
+                    <td style="text-align: left;">
+                        <span>{{history['monitoringfrequency']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['frequencyreason']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['lastmodifiedby']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['fluidtaken'] | date : 'dd-MM-YYYY HH:mm'}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['lastmodifiedon']}}</span>
+                    </td>
+                </tr>   
+            </table>
+        </div>
+    
+        <div *ngIf="bristolstoolhistorydata?.length == 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Bowel Monitoring using the Bristol Stool Chart</h5>
+                </div>
+                <div class="col-6">
+    
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>Bowel Monitoring using the Bristol Stool Chart</h5></td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Type</th>
+                    <th>Monitoring Frequency</th>
+                    <th>Reason</th>
+                    <th>Recorded By</th>
+                    <th>Recorded Date/Time</th>
+                    <th>Reason for refusal</th>
+                </tr>
+        
+                <tr>
+                    <td style="text-align: left;">
+                        <span> <b>No data.</b></span>
+                    </td>
+                </tr>   
+            </table>
+        </div>
+    
+        <div *ngIf="comascalehistorydata?.length > 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Neurological Obs - Coma Scale</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>Neurological Obs - Coma Scale</h5></td>
+                </tr>
+            </table>
+            <!-- <div class="row">   
+                <div class="col-6">
+                    <div class="font-weight-bold">Neurological Obs monitoring frequency :</div>
+                    <div *ngIf="!appService.isGCSMonitoringStopped"> {{appService.GCSMonitoringFrequency}}</div>
+                </div>
+                
+                <div class="col-6">
+                    <div class="font-weight-bold">Time to next Neurological Obs : </div> 
+                    <div *ngIf="!appService.isGCSMonitoringStopped">
+                        <div *ngIf="isGCSDue()" class="text-danger font-weight-bold">
+                            Overdue by 
+                            {{appService.timetonextGCS}}
+                        </div>
+                        <div *ngIf="!isGCSDue() &&  appService.nextGCSObsDueTime " class="text-info font-weight-bold">
+                            Due in 
+                            {{appService.timetonextGCS}}
+                        </div>
+                    </div>
+                    <div *ngIf="(appService.isGCSMonitoringStopped)">
+                        <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                    </div>
+                    
+                    
+                </div>
+            </div> -->
+            <table style="width:100%">
+                <tr>
+                    <td style="width: 33%;">
+                        <div class="font-weight-bold">Neurological Obs monitoring frequency :</div>
+                        <div *ngIf="!appService.isGCSMonitoringStopped"> {{appService.GCSMonitoringFrequency}}</div>
+                    </td>
+                    <td style="width: 33%; padding-left: 75px">
+                        <div class="font-weight-bold">Time to next Neurological Obs : </div> 
+                        <div *ngIf="!appService.isGCSMonitoringStopped">
+                            <div *ngIf="isGCSDue()" class="text-danger font-weight-bold">
+                                Overdue by 
+                                {{appService.timetonextGCS}}
+                            </div>
+                            <div *ngIf="!isGCSDue() &&  appService.nextGCSObsDueTime " class="text-info font-weight-bold">
+                                Due in 
+                                {{appService.timetonextGCS}}
+                            </div>
+                        </div>
+                        <div *ngIf="(appService.isGCSMonitoringStopped)">
+                            <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                        </div>
+                    </td>
+                    <td style="width: 33%;">
+                        <div style="margin-top:20px !important; margin-bottom: -35px; font-weight: bold; text-align: right;">Showing {{comascalehistorydata?.length > 10 ? 10 : comascalehistorydata?.length}} of {{comascalehistorydata?.length}} records</div>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Total Score</th>
+                    <th>Monitoring Frequency</th>
+                    <th>Partial</th>
+                    <th>Eyes</th>
+                    <th>Verbal</th>
+                    <th>Motor</th>
+                    <th>Reason</th>
+                    <th>Recorded by</th>
+                </tr>
+        
+                <tr *ngFor="let history of comascalehistorydata | slice:0:10">
+                    <td style="text-align: left;">
+                        <span> {{history['datestarted'] | date : 'dd-MM-YYYY HH:mm'}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['totalscore']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['monitoringfrequency']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['partial']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['eye']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['verbal']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['motor']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['reason']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['recordedby']}}</span>
+                    </td>
+                </tr>    
+            </table>
+        </div>
+    
+        <div *ngIf="comascalehistorydata?.length == 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Neurological Obs - Coma Scale</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>Neurological Obs - Coma Scale</h5></td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Total Score</th>
+                    <th>Monitoring Frequency</th>
+                    <th>Partial</th>
+                    <th>Eyes</th>
+                    <th>Verbal</th>
+                    <th>Motor</th>
+                    <th>Reason</th>
+                    <th>Recorded by</th>
+                </tr>
+        
+                <tr>
+                    <td style="text-align: left;">
+                        <span> <b>No data.</b></span>
+                    </td>
+                </tr>   
+            </table>
+        </div>
+    
+        <div *ngIf="pupilhistorydata?.length > 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Neurological Obs - Pupils</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>Neurological Obs - Pupils</h5></td>
+                </tr>
+            </table>
+            <!-- <div class="row">   
+                <div class="col-6">
+                    <div class="font-weight-bold">Neurological Obs monitoring frequency :</div>
+                    <div *ngIf="!appService.isGCSMonitoringStopped"> {{appService.GCSMonitoringFrequency}}</div>
+                </div>
+                
+                <div class="col-6">
+                    <div class="font-weight-bold">Time to next Neurological Obs : </div> 
+                    <div *ngIf="!appService.isGCSMonitoringStopped">
+                        <div *ngIf="isGCSDue()" class="text-danger font-weight-bold">
+                            Overdue by 
+                            {{appService.timetonextGCS}}
+                        </div>
+                        <div *ngIf="!isGCSDue() &&  appService.nextGCSObsDueTime " class="text-info font-weight-bold">
+                            Due in 
+                            {{appService.timetonextGCS}}
+                        </div>
+                    </div>
+                    <div *ngIf="(appService.isGCSMonitoringStopped)">
+                        <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                    </div>
+                    
+                    
+                </div>
+            </div> -->
+
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 45%;">
+                        <div class="font-weight-bold">Neurological Obs monitoring frequency :</div>
+                        <div *ngIf="!appService.isGCSMonitoringStopped"> {{appService.GCSMonitoringFrequency}}</div>
+                    </td>
+                    <td style="width: 35%; padding-left: 75px">
+                        <div class="font-weight-bold">Time to next Neurological Obs : </div> 
+                        <div *ngIf="!appService.isGCSMonitoringStopped">
+                            <div *ngIf="isGCSDue()" class="text-danger font-weight-bold">
+                                Overdue by 
+                                {{appService.timetonextGCS}}
+                            </div>
+                            <div *ngIf="!isGCSDue() &&  appService.nextGCSObsDueTime " class="text-info font-weight-bold">
+                                Due in 
+                                {{appService.timetonextGCS}}
+                            </div>
+                        </div>
+                        <div *ngIf="(appService.isGCSMonitoringStopped)">
+                            <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                        </div>
+                    </td>
+                    <td style="width: 20%;">
+                        <div style="margin-top:20px !important; margin-bottom: -35px; font-weight: bold; text-align: right">Showing {{pupilhistorydata?.length > 10 ? 10 : pupilhistorydata?.length}} of {{pupilhistorydata?.length}} records</div>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Right Size</th>
+                    <th>Right reaction</th>
+                    <th>Left size</th>
+                    <th>Left reaction</th>
+                    <th>Reason</th>
+                    <th>Recorded by</th>
+                </tr>
+        
+                <tr *ngFor="let history of pupilhistorydata | slice:0:10">
+                    <td style="text-align: left;">
+                        <span> {{history['datestarted'] | date : 'dd-MM-YYYY HH:mm'}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['rightsize']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['rightreaction']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['leftsize']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['leftreaction']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['reason']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['recordedby']}}</span>
+                    </td>
+                </tr> 
+            </table>
+        </div>
+    
+        <div *ngIf="pupilhistorydata?.length == 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Neurological Obs - Pupils</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>Neurological Obs - Pupils</h5></td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Right Size</th>
+                    <th>Right reaction</th>
+                    <th>Left size</th>
+                    <th>Left reaction</th>
+                    <th>Reason</th>
+                    <th>Recorded by</th>
+                </tr>
+        
+                <tr>
+                    <td style="text-align: left;">
+                        <span> <b>No data.</b></span>
+                    </td>
+                </tr>  
+            </table>
+        </div>
+    
+        <div *ngIf="limbshistorydata?.length > 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Neurological Obs - Limbs</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>Neurological Obs - Limbs</h5></td>
+                </tr>
+            </table>
+            <!-- <div class="row">  
+                <div class="col-6">
+                    <div class="font-weight-bold">Neurological Obs monitoring frequency :</div>
+                    <div *ngIf="!appService.isGCSMonitoringStopped"> {{appService.GCSMonitoringFrequency}}</div>
+                </div>
+                
+                <div class="col-6">
+                    <div class="font-weight-bold">Time to next Neurological Obs : </div> 
+                    <div *ngIf="!appService.isGCSMonitoringStopped">
+                        <div *ngIf="isGCSDue()" class="text-danger font-weight-bold">
+                            Overdue by 
+                            {{appService.timetonextGCS}}
+                        </div>
+                        <div *ngIf="!isGCSDue() &&  appService.nextGCSObsDueTime " class="text-info font-weight-bold">
+                            Due in 
+                            {{appService.timetonextGCS}}
+                        </div>
+                    </div>
+                    <div *ngIf="(appService.isGCSMonitoringStopped)">
+                        <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                    </div>
+                    
+                    
+                </div>
+            </div> -->
+
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 33%;">
+                        <div class="font-weight-bold">Neurological Obs monitoring frequency :</div>
+                        <div *ngIf="!appService.isGCSMonitoringStopped"> {{appService.GCSMonitoringFrequency}}</div>
+                    </td>
+                    <td style="width: 33%; padding-left: 75px">
+                        <div class="font-weight-bold">Time to next Neurological Obs : </div> 
+                        <div *ngIf="!appService.isGCSMonitoringStopped">
+                            <div *ngIf="isGCSDue()" class="text-danger font-weight-bold">
+                                Overdue by 
+                                {{appService.timetonextGCS}}
+                            </div>
+                            <div *ngIf="!isGCSDue() &&  appService.nextGCSObsDueTime " class="text-info font-weight-bold">
+                                Due in 
+                                {{appService.timetonextGCS}}
+                            </div>
+                        </div>
+                        <div *ngIf="(appService.isGCSMonitoringStopped)">
+                            <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                        </div>
+                    </td>
+                    <td style="width: 33%;">
+                        <div style="margin-top:20px !important; margin-bottom: -35px; font-weight: bold; text-align: right;">Showing {{limbshistorydata?.length > 10 ? 10 : limbshistorydata?.length}} of {{limbshistorydata?.length}} records</div>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Left arm</th>
+                    <th>Right arm</th>
+                    <th>Left leg</th>
+                    <th>Right leg</th>
+                    <th>Reason</th>
+                    <th>Recorded by</th>
+                </tr>
+        
+                <tr *ngFor="let history of limbshistorydata | slice:0:10">
+                    <td style="text-align: left;">
+                        <span> {{history['datestarted'] | date : 'dd-MM-YYYY HH:mm'}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['leftarm']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['rightarm']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['leftleg']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['rightleg']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['reason']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['recordedby']}}</span>
+                    </td>
+                </tr> 
+            </table>
+        </div>
+    
+        <div *ngIf="limbshistorydata?.length == 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Neurological Obs - Limbs</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>Neurological Obs - Limbs</h5></td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Left arm</th>
+                    <th>Right arm</th>
+                    <th>Left leg</th>
+                    <th>Right leg</th>
+                    <th>Reason</th>
+                    <th>Recorded by</th>
+                </tr>
+        
+                <tr>
+                    <td style="text-align: left;">
+                        <span><b>No data.</b></span>
+                    </td>
+                </tr>  
+            </table>
+        </div>
+    
+        <div *ngIf="bloodpressurehistorydata?.length > 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Postural Blood Pressure</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width:33%"><h5>Postural Blood Pressure</h5></td>
+                    <td style="width:33%"></td>
+                    <td style="width:33%">
+                        <div style="margin-top:15px !important; margin-bottom: -35px; font-weight: bold; text-align: right;">Showing {{bloodpressurehistorydata?.length > 10 ? 10 : bloodpressurehistorydata?.length}} of {{bloodpressurehistorydata?.length}} records</div>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;">
+                    <th style="text-align: center; padding-bottom: 0px;"></th>
+                    <th colspan="2" style="text-align: center; padding-bottom: 0px;">Sitting/Lying</th>
+                    <th colspan="2" style="text-align: center; padding-bottom: 0px;">Standing</th>
+                    <th style="text-align: center; padding-bottom: 0px;"></th>
+                    <th style="text-align: center; padding-bottom: 0px;"></th>
+                </tr>
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Systolic</th>
+                    <th>Diastolic</th>
+                    <th>Systolic</th>
+                    <th>Diastolic</th>
+                    <th>Recorded By</th>
+                    <th>Postural Change</th>
+                </tr>
+        
+                <tr *ngFor="let history  of bloodpressurehistorydata | slice:0:10">
+                    <td style="text-align: left;">
+                        <span> {{history['datestarted'] | date : 'dd-MM-YYYY HH:mm'}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['fluidtaken']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['passedurine']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['foodtaken']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['monitoringfrequency']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['lastmodifiedby']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['frequencyreason']}}</span>
+                    </td>
+                </tr> 
+            </table>
+        </div>
+    
+        <div *ngIf="bloodpressurehistorydata?.length == 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Postural Blood Pressure</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>Postural Blood Pressure</h5></td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;">
+                    <th style="text-align: center; padding-bottom: 0px;"></th>
+                    <th colspan="2" style="text-align: center; padding-bottom: 0px;">Sitting/Lying</th>
+                    <th colspan="2" style="text-align: center; padding-bottom: 0px;">Standing</th>
+                    <th style="text-align: center; padding-bottom: 0px;"></th>
+                    <th style="text-align: center; padding-bottom: 0px;"></th>
+                </tr>
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Systolic</th>
+                    <th>Diastolic</th>
+                    <th>Systolic</th>
+                    <th>Diastolic</th>
+                    <th>Recorded By</th>
+                    <th>Postural Change</th>
+                </tr>
+        
+                <tr>
+                    <td style="text-align: left;">
+                        <span><b>No data.</b></span>
+                    </td>
+                </tr>  
+            </table>
+        </div>
+    
+        <div *ngIf="foodandfluidhistorydata?.length > 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Food and Fluid</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>Food and Fluid</h5></td>
+                </tr>
+            </table>
+            <!-- <div class="row">  
+                <div class="col-6">
+                    <div class="font-weight-bold">Food and fluid monitoring frequency :</div>
+                    <div *ngIf="!appService.isFFMonitoringStopped"> {{appService.FFMonitoringFrequency}}</div>
+                </div> 
+                
+                <div class="col-6">
+                    <div class="font-weight-bold">Time to next Food & Fluid : </div> 
+                    <div *ngIf="!appService.isFFMonitoringStopped">
+                        <div *ngIf="isFFDue()" class="text-danger font-weight-bold">
+                            Overdue by 
+                            {{appService.timetonextFF}}
+                        </div>
+                        <div *ngIf="!isFFDue() &&  appService.nextFFObsDueTime " class="text-info font-weight-bold">
+                            Due in 
+                            {{appService.timetonextFF}}
+                        </div>
+                    </div>
+                    <div *ngIf="(appService.isFFMonitoringStopped)">
+                        <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                    </div>
+                    
+                    
+                </div>
+            </div> -->
+
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 33%;">
+                        <div class="font-weight-bold">Food and fluid monitoring frequency :</div>
+                        <div *ngIf="!appService.isFFMonitoringStopped"> {{appService.FFMonitoringFrequency}}</div>
+                    </td>
+                    <td style="width: 33%; padding-left: 75px">
+                        <div class="font-weight-bold">Time to next Food & Fluid : </div> 
+                        <div *ngIf="!appService.isFFMonitoringStopped">
+                            <div *ngIf="isFFDue()" class="text-danger font-weight-bold">
+                                Overdue by 
+                                {{appService.timetonextFF}}
+                            </div>
+                            <div *ngIf="!isFFDue() &&  appService.nextFFObsDueTime " class="text-info font-weight-bold">
+                                Due in 
+                                {{appService.timetonextFF}}
+                            </div>
+                        </div>
+                        <div *ngIf="(appService.isFFMonitoringStopped)">
+                            <div class="text-danger font-weight-bold"> Monitoring Stopped</div>
+                        </div>
+                    </td>
+                    <td style="width: 33%;">
+                        <div style="margin-top:20px !important; margin-bottom: -35px; font-weight: bold; text-align: right;">Showing {{foodandfluidhistorydata?.length}} records (today + previous 2 days)</div>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Food Taken</th>
+                    <th>Fluid Taken</th>
+                    <th>Passed Urine</th>
+                    <th>Running Total</th>
+                    <th>Monitoring Frequency</th>
+                    <th>Reason</th>
+                    <th>Recorded Date/Time</th>
+                    <th>Recorded by</th>
+                </tr>
+        
+                <tr *ngFor="let history of foodandfluidhistorydata; let i = index">
+                    <td style="text-align: left;">
+                        <span> {{history['datestarted'] | date : 'dd-MM-YYYY HH:mm'}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <ul style="list-style-type: none; padding: 0; margin: 0;">
+                            <li *ngFor="let item of history['foodtakenhtml']">{{ item }}</li>
+                        </ul>
+                    </td>
+                    <td style="text-align: left;">
+                        <ul style="list-style-type: none; padding: 0; margin: 0;">
+                            <li *ngFor="let item of history['fluidtakenhtml']">{{ item }}</li>
+                        </ul>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['passedurine']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{ runningTotals[i]?.currentRunningTotal }} ml</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['monitoringfrequency']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['frequencyreason']}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['lastmodifiedon'] | date : 'dd-MM-YYYY HH:mm'}}</span>
+                    </td>
+                    <td style="text-align: left;">
+                        <span>{{history['lastmodifiedby']}}</span>
+                    </td>
+                </tr> 
+            </table>
+        </div>
+    
+        <div *ngIf="foodandfluidhistorydata?.length == 0" [ngStyle]="{ 'width': headerwidth }">
+            <hr>
+            <!-- <div class="row">
+                <div class="col-6">
+                    <h5>Food and Fluid</h5>
+                </div>
+                <div class="col-6">
+                </div>
+            </div> -->
+            <table>
+                <tr>
+                    <td><h5>Food and Fluid</h5></td>
+                </tr>
+            </table>
+            <br>
+            <table class="table table-borderless">
+                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                    <th>Observation Time</th>
+                    <th>Food Taken</th>
+                    <th>Fluid Taken</th>
+                    <th>Passed Urine</th>
+                    <th>Running Total</th>
+                    <th>Monitoring Frequency</th>
+                    <th>Reason</th>
+                    <th>Recorded Date/Time</th>
+                    <th>Recorded by</th>
+                </tr>
+        
+                <tr>
+                    <td style="text-align: left;">
+                        <span><b>No data.</b></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+          
+    <div *ngIf="loadcomplete" id="load_complete">
+        
+    </div>
+    
+   
+
+</div>
